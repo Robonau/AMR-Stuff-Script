@@ -17,6 +17,9 @@ function callbackk(mutations) {
         //no boarders in continuous scroll mode
         document.querySelector("#amrapp > div.v-application--wrap > main > div > div > table").classList.add('webtoon');
         
+        //code probably only i need
+        //document.querySelector("head > title").innerText = 'Manga'
+
         //if no jquiry then add jquiry
         if (typeof jQuery == 'undefined') {
             var headTag = document.getElementsByTagName("head")[0];
@@ -39,6 +42,15 @@ function callbackk(mutations) {
                 }
             });
         }
+        //code probably only i need
+        /*
+        let observer = new MutationObserver(callback);
+        let options = {
+            characterData: true,
+            childList: true
+        }
+        observer.observe(document.querySelector("head > title"), options);
+        */
 
         /*
         in order
@@ -63,6 +75,15 @@ function callbackk(mutations) {
         `)
     }
 }
+
+//code probably only i need
+/*
+function callback (mutations) {
+    if (document.querySelector("head > title").innerText != 'Manga'){
+        document.querySelector("head > title").innerText = 'Manga'
+    }
+}
+*/
 
 let options = {
     characterData: true,

@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         AMR stuff
-// @version      0.4
+// @version      0.5
 // @description  just some AMR QOL stuff
 // @author       Robo
 // @include      *
 // @grant        GM_addStyle
 // @grant        GM_registerMenuCommand
+// @grant        GM.registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js

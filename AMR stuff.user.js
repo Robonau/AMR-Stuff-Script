@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMR stuff
-// @version      0.1
-// @description  just some AMR QOL stuff 
+// @version      0.2
+// @description  just some AMR QOL stuff
 // @author       Robo
 // @include      *
 // @grant        GM_addStyle
@@ -16,7 +16,7 @@ function callbackk(mutations) {
 
         //no boarders in continuous scroll mode
         document.querySelector("#amrapp > div.v-application--wrap > main > div > div > table").classList.add('webtoon');
-        
+
         //code probably only i need
         //document.querySelector("head > title").innerText = 'Manga'
 
@@ -32,25 +32,25 @@ function callbackk(mutations) {
             myJQueryCode();
         }
 
-        //detect space bar press and do scrollMagic from HakuNeko 
+        //detect space bar press and do scrollMagic from HakuNeko
         function myJQueryCode() {
             jQuery(document).on('keydown', function (e) {
-                console.log(e.keyCode);
                 if (e.keyCode == 32 && e.target == document.body) {
                     e.preventDefault();
                     scrollMagic();
                 }
             });
         }
+
         //code probably only i need
-        /*
+        //this origonally just changed the title of the page to "manga" but t now fixes the starting half way issue
         let observer = new MutationObserver(callback);
         let options = {
             characterData: true,
             childList: true
         }
         observer.observe(document.querySelector("head > title"), options);
-        */
+
 
         /*
         in order
@@ -77,13 +77,15 @@ function callbackk(mutations) {
 }
 
 //code probably only i need
-/*
+//this origonally just changed the title of the page to "manga" but t now fixes the starting half way issue
+
 function callback (mutations) {
-    if (document.querySelector("head > title").innerText != 'Manga'){
-        document.querySelector("head > title").innerText = 'Manga'
-    }
+    // if (document.querySelector("head > title").innerText != 'Manga'){
+    //     document.querySelector("head > title").innerText = 'Manga'
+        $('html,body').animate({ scrollTop: 0 }, 0);
+    // }
 }
-*/
+
 
 let options = {
     characterData: true,
@@ -111,8 +113,8 @@ async function scrollMagic() {
     // Is the target image top within view ? then scroll to the top of it
     if (targetScrollImage.getBoundingClientRect().top > 1) {
         // Scroll to it
-        $('html, body').animate({
-            scrollTop: $(targetScrollImage).offset().top
+        jQuery('html, body').animate({
+            scrollTop: jQuery(targetScrollImage).offset().top
         }, 500);
     }// Do we stay within target ? (bottom is further than current view)
     else if (window.innerHeight + 1 < targetScrollImage.getBoundingClientRect().bottom) {
@@ -126,8 +128,8 @@ async function scrollMagic() {
         // Find next image
         let nextScrollImage = targetScrollImage.nextElementSibling;
         // Scroll to it
-        $('html, body').animate({
-            scrollTop: $(nextScrollImage).offset().top
+        jQuery('html, body').animate({
+            scrollTop: jQuery(nextScrollImage).offset().top
         }, 500);
 
     }

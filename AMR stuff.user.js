@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AMR stuff
-// @version      0.3
+// @version      0.4
 // @description  just some AMR QOL stuff
 // @author       Robo
 // @include      *
@@ -85,7 +85,7 @@ function ret(ele) {
 }`
 }
 
-GM_registerMenuCommand("Config for Anime & Manga sites", function () {
+GM_registerMenuCommand("Config for AMR Manga Reading", function () {
     GM_config.open();
 });
 

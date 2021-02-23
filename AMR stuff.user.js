@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AMR stuff
-// @version      0.5
+// @version      0.6
 // @description  just some AMR QOL stuff
 // @author       Robo
 // @include      *

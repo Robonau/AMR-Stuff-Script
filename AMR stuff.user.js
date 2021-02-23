@@ -1,12 +1,95 @@
 // ==UserScript==
 // @name         AMR stuff
-// @version      0.2
+// @version      0.3
 // @description  just some AMR QOL stuff
 // @author       Robo
 // @include      *
 // @grant        GM_addStyle
+// @grant        GM_registerMenuCommand
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
 // ==/UserScript==
 /* globals jQuery, $, waitForKeyElements, gmfetch, MonkeyConfig*/
+
+/* #region setup */
+const optionss = [{
+    id: 'webtoon',
+    name: 'webtoon mode on by defult',
+    default: true
+},
+{
+    id: 'mangaTitle',
+    name: "set page title to 'manga'",
+    default: false
+},
+{
+    id: 'magicScroll',
+    name: 'Magic Scroll on space bar',
+    default: true
+},
+{
+    id: 'halfFix',
+    name: 'Fix new chapters from starting half way',
+    default: true
+},
+{
+    id: 'Triangle',
+    name: 'Fix yellow Triangle size',
+    default: true
+},
+{
+    id: '100Width',
+    name: 'always scale up images',
+    default: true
+},
+]
+
+let fieldDefs = JSON.parse('{' + optionss.map(ele => ret(ele)).join('\n,') + '}')
+
+GM_config.init({
+    id: 'GM_config',
+    title: 'Config for AMR Manga Reading',
+    fields: fieldDefs,
+    css: `
+[id^="GM_config_ID"] {
+    float: left
+}
+.iconImg {
+    width: 16px;
+    vertical-align: middle;
+}
+.config_var {
+    margin-right: 5% !important;
+    display: inline !important;
+}`,
+    events: {
+        open: function (doc) {
+            [...doc.querySelectorAll(".section_header_holder")].filter(ele => ele.querySelector('.center')).forEach(function (ele) {
+                ele.style.backgroundColor = 'transparent'
+                ele.style.border = '4px solid transparent'
+            });
+        },
+        save: function () {
+            location.reload();
+        }
+    }
+});
+
+function ret(ele) {
+    return `"${ele.id}": {
+    "section": [],
+    "label": "${ele.name}",
+    "type": "checkbox",
+    "default": ${ele.default}
+}`
+}
+
+GM_registerMenuCommand("Config for Anime & Manga sites", function () {
+    GM_config.open();
+});
+
+/* #endregion */
 
 let observerr = new MutationObserver(callbackk);
 
@@ -15,21 +98,27 @@ function callbackk(mutations) {
         observerr.disconnect()
 
         //no boarders in continuous scroll mode
-        document.querySelector("#amrapp > div.v-application--wrap > main > div > div > table").classList.add('webtoon');
+        if (GM_config.get('webtoon')) {
+            document.querySelector("#amrapp > div.v-application--wrap > main > div > div > table").classList.add('webtoon');
+        }
 
         //code probably only i need
-        //document.querySelector("head > title").innerText = 'Manga'
+        if (GM_config.get('mangaTitle')) {
+            document.querySelector("head > title").innerText = 'Manga'
+        }
 
         //if no jquiry then add jquiry
-        if (typeof jQuery == 'undefined') {
-            var headTag = document.getElementsByTagName("head")[0];
-            var jqTag = document.createElement('script');
-            jqTag.type = 'text/javascript';
-            jqTag.src = 'https://code.jquery.com/jquery-3.5.1.js';
-            jqTag.onload = myJQueryCode;
-            headTag.appendChild(jqTag);
-        } else {
-            myJQueryCode();
+        if (GM_config.get('magicScroll')) {
+            if (typeof jQuery == 'undefined') {
+                var headTag = document.getElementsByTagName("head")[0];
+                var jqTag = document.createElement('script');
+                jqTag.type = 'text/javascript';
+                jqTag.src = 'https://code.jquery.com/jquery-3.5.1.js';
+                jqTag.onload = myJQueryCode;
+                headTag.appendChild(jqTag);
+            } else {
+                myJQueryCode();
+            }
         }
 
         //detect space bar press and do scrollMagic from HakuNeko
@@ -44,13 +133,14 @@ function callbackk(mutations) {
 
         //code probably only i need
         //this origonally just changed the title of the page to "manga" but t now fixes the starting half way issue
-        let observer = new MutationObserver(callback);
-        let options = {
-            characterData: true,
-            childList: true
+        if (GM_config.get('mangaTitle') || GM_config.get('halfFix')) {
+            let observer = new MutationObserver(callback);
+            let options = {
+                characterData: true,
+                childList: true
+            }
+            observer.observe(document.querySelector("head > title"), options);
         }
-        observer.observe(document.querySelector("head > title"), options);
-
 
         /*
         in order
@@ -59,10 +149,14 @@ function callbackk(mutations) {
         dito
         no boarders in side by side mode
         */
-        GM_addStyle(`
+        if (GM_config.get('Triangle')) {
+            GM_addStyle(`
             .amr-triangle {
                 border-left: 0px solid transparent;
-            }
+            }`)
+        }
+        if (GM_config.get('100Width')) {
+            GM_addStyle(`
             .scanContainer.res-w img {
                 width: 100%;
             }
@@ -71,19 +165,29 @@ function callbackk(mutations) {
             }
             .amr-scan-container td {
                 padding: 0 !important;
-            }
-        `)
+            }`)
+        }
+        if (GM_config.get('webtoon')) {
+            GM_addStyle(`
+                .amr-scan-container td {
+                    padding: 0 !important;
+                }`)
+        }
     }
 }
 
 //code probably only i need
 //this origonally just changed the title of the page to "manga" but t now fixes the starting half way issue
 
-function callback (mutations) {
-    // if (document.querySelector("head > title").innerText != 'Manga'){
-    //     document.querySelector("head > title").innerText = 'Manga'
+function callback(mutations) {
+    if (GM_config.get('mangaTitle')) {
+        if (document.querySelector("head > title").innerText != 'Manga') {
+            document.querySelector("head > title").innerText = 'Manga'
+        }
+    }
+    if (GM_config.get('halfFix')) {
         $('html,body').animate({ scrollTop: 0 }, 0);
-    // }
+    }
 }
 
 

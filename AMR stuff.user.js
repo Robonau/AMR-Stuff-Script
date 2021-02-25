@@ -42,7 +42,12 @@ const optionss = [{
 {
     id: '100Width',
     name: 'always scale up images',
-    default: true
+    default: true//mangaTitleName
+},
+{
+    id: 'mangaTitleName',
+    name: 'set page title to the manga title',
+    default: false
 },
 ]
 
@@ -185,6 +190,8 @@ function callback(mutations) {
         if (document.querySelector("head > title").innerText != 'Manga') {
             document.querySelector("head > title").innerText = 'Manga'
         }
+    }else if (GM_config.get('mangaTitleName')){
+        document.querySelector("head > title").innerText = document.querySelector("h4 > a").textContent
     }
     if (GM_config.get('halfFix')) {
         $('html,body').animate({ scrollTop: 0 }, 0);

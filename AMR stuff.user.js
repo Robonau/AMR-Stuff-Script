@@ -110,7 +110,15 @@ function callbackk(mutations) {
 
         //code probably only i need
         if (GM_config.get('mangaTitle')) {
-            document.querySelector("head > title").innerText = 'Manga'
+            if (document.querySelector("head > title").textContent != 'Manga') {
+                document.querySelector("head > title").textContent = 'Manga'
+            }
+        } else if (GM_config.get('mangaTitleName')) {
+            if (!(document.querySelector("h4 > a") == null || document.querySelector("div.v-select__selection.v-select__selection--comma") == null)) {
+                if (document.querySelector("head > title").textContent != document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent) {
+                    document.querySelector("head > title").textContent = document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent
+                }
+            }
         }
 
         //if no jquiry then add jquiry
@@ -187,12 +195,14 @@ function callbackk(mutations) {
 
 function callback(mutations) {
     if (GM_config.get('mangaTitle')) {
-        if (document.querySelector("head > title").innerText != 'Manga') {
-            document.querySelector("head > title").innerText = 'Manga'
+        if (document.querySelector("head > title").textContent != 'Manga') {
+            document.querySelector("head > title").textContent = 'Manga'
         }
     } else if (GM_config.get('mangaTitleName')) {
-        if (document.querySelector("h4 > a")) {
-            document.querySelector("head > title").textContent = document.querySelector("h4 > a").textContent
+        if (!(document.querySelector("h4 > a") == null || document.querySelector("div.v-select__selection.v-select__selection--comma") == null)) {
+            if (document.querySelector("head > title").textContent != document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent) {
+                document.querySelector("head > title").textContent = document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent
+            }
         }
     }
     if (GM_config.get('halfFix')) {

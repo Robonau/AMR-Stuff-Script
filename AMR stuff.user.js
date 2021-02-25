@@ -190,8 +190,10 @@ function callback(mutations) {
         if (document.querySelector("head > title").innerText != 'Manga') {
             document.querySelector("head > title").innerText = 'Manga'
         }
-    }else if (GM_config.get('mangaTitleName')){
-        document.querySelector("head > title").innerText = document.querySelector("h4 > a").textContent
+    } else if (GM_config.get('mangaTitleName')) {
+        if (document.querySelector("h4 > a")) {
+            document.querySelector("head > title").textContent = document.querySelector("h4 > a").textContent
+        }
     }
     if (GM_config.get('halfFix')) {
         $('html,body').animate({ scrollTop: 0 }, 0);

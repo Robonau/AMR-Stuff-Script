@@ -100,7 +100,7 @@ GM_registerMenuCommand("Config for AMR Manga Reading", function () {
 let observerr = new MutationObserver(callbackk);
 
 function callbackk(mutations) {
-    if (document.querySelector("#amrapp > div.v-application--wrap > main > div > div > table > tr > td")) {
+    if (document.querySelector("#amrapp div.v-select__selection.v-select__selection--comma")) {
         observerr.disconnect()
 
         //no boarders in continuous scroll mode
@@ -147,7 +147,7 @@ function callbackk(mutations) {
 
         //code probably only i need
         //this origonally just changed the title of the page to "manga" but t now fixes the starting half way issue
-        if (GM_config.get('mangaTitle') || GM_config.get('halfFix')) {
+        if (GM_config.get('mangaTitle') || GM_config.get('halfFix') || GM_config.get('mangaTitleName')) {
             let observer = new MutationObserver(callback);
             let options = {
                 characterData: true,
@@ -199,10 +199,9 @@ function callback(mutations) {
             document.querySelector("head > title").textContent = 'Manga'
         }
     } else if (GM_config.get('mangaTitleName')) {
-        if (!(document.querySelector("h4 > a") == null || document.querySelector("div.v-select__selection.v-select__selection--comma") == null)) {
-            if (document.querySelector("head > title").textContent != document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent) {
-                document.querySelector("head > title").textContent = document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent
-            }
+        let title = document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent
+        if (document.querySelector("head > title").textContent != title) {
+            document.querySelector("head > title").textContent = title
         }
     }
     if (GM_config.get('halfFix')) {
@@ -213,7 +212,8 @@ function callback(mutations) {
 
 let options = {
     characterData: true,
-    childList: true
+    childList: true,
+    subtree: true
 }
 
 //run the observer that checks for if the page is taekn over by amr

@@ -44,11 +44,6 @@ const optionss = [{
     name: 'always scale up images',
     default: true//mangaTitleName
 },
-{
-    id: 'mangaTitleName',
-    name: 'set page title to the manga title',
-    default: false
-},
 ]
 
 let fieldDefs = JSON.parse('{' + optionss.map(ele => ret(ele)).join('\n,') + '}')
@@ -129,12 +124,6 @@ function callbackk(mutations) {
                 if (document.querySelector("head > title").textContent != 'Manga') {
                     document.querySelector("head > title").textContent = 'Manga'
                 }
-            } else if (GM_config.get('mangaTitleName')) {
-                if (!(document.querySelector("h4 > a") == null || document.querySelector("div.v-select__selection.v-select__selection--comma") == null)) {
-                    if (document.querySelector("head > title").textContent != document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent) {
-                        document.querySelector("head > title").textContent = document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent
-                    }
-                }
             }
 
             //if no jquiry then add jquiry
@@ -212,11 +201,6 @@ function callback(mutations) {
     if (GM_config.get('mangaTitle')) {
         if (document.querySelector("head > title").textContent != 'Manga') {
             document.querySelector("head > title").textContent = 'Manga'
-        }
-    } else if (GM_config.get('mangaTitleName')) {
-        let title = document.querySelector("h4 > a").textContent + ' ' + document.querySelector("div.v-select__selection.v-select__selection--comma").textContent
-        if (document.querySelector("head > title").textContent != title) {
-            document.querySelector("head > title").textContent = title
         }
     }
 }

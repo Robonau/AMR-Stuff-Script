@@ -16,18 +16,13 @@
 /* #region setup */
 const optionss = [{
     id: 'webtoon',
-    name: 'webtoon mode on by defult',
+    name: 'webtoon mode on always',
     default: true
 },
 {
     id: 'mangaTitle',
     name: "set page title to 'manga'",
     default: false
-},
-{
-    id: 'halfFix',
-    name: 'Fix new chapters from starting half way',
-    default: true
 },
 {
     id: '100Width',
@@ -43,17 +38,17 @@ GM_config.init({
     title: 'Config for AMR Manga Reading',
     fields: fieldDefs,
     css: `
-[id^="GM_config_ID"] {
-    float: left
-}
-.iconImg {
-    width: 16px;
-    vertical-align: middle;
-}
-.config_var {
-    margin-right: 5% !important;
-    display: inline !important;
-}`,
+    [id^="GM_config_ID"] {
+        float: left
+    }
+    .iconImg {
+        width: 16px;
+        vertical-align: middle;
+    }
+    .config_var {
+        margin-right: 5% !important;
+        display: inline !important;
+    }`,
     events: {
         open: function (doc) {
             [...doc.querySelectorAll(".section_header_holder")].filter(ele => ele.querySelector('.center')).forEach(function (ele) {
@@ -73,7 +68,7 @@ function ret(ele) {
     "label": "${ele.name}",
     "type": "checkbox",
     "default": ${ele.default}
-}`
+    }`
 }
 
 GM_registerMenuCommand("Config for AMR Manga Reading", function () {
@@ -86,74 +81,55 @@ let observerr = new MutationObserver(callbackk);
 let start = 0
 function callbackk(mutations) {
     if (document.querySelector("#amrapp div.v-select__selection.v-select__selection--comma")) {
-        if (mutations[0].target == document.querySelector('div.v-select__selections')) {
-            if (GM_config.get('halfFix')) {
-                //scroll to top needs jquery
-                if (typeof jQuery == 'undefined') {
-                    var headTag = document.getElementsByTagName("head")[0];
-                    var jqTag = document.createElement('script');
-                    jqTag.type = 'text/javascript';
-                    jqTag.src = 'https://code.jquery.com/jquery-3.5.1.js';
-                    jqTag.onload = myJQueryCode;
-                    headTag.topAnim(jqTag);
-                } else {
-                    topAnim();
-                }
+        observerr.disconnect();
+        start = 1
+        //no boarders in continuous scroll mode
+        if (GM_config.get('webtoon')) {
+            document.querySelector("#amrapp > div.v-application--wrap > main > div > div > table").classList.add('webtoon');
+        }
+
+        //code probably only i need
+        if (GM_config.get('mangaTitle')) {
+            if (document.querySelector("head > title").textContent != 'Manga') {
+                document.querySelector("head > title").textContent = 'Manga'
             }
         }
 
-        if (start == 0) {
-            start = 1
-            //no boarders in continuous scroll mode
-            if (GM_config.get('webtoon')) {
-                document.querySelector("#amrapp > div.v-application--wrap > main > div > div > table").classList.add('webtoon');
+        if (GM_config.get('mangaTitle')) {
+            let observer = new MutationObserver(callback);
+            let options = {
+                characterData: true,
+                childList: true
             }
+            observer.observe(document.querySelector("head > title"), options);
+        }
 
-            //code probably only i need
-            if (GM_config.get('mangaTitle')) {
-                if (document.querySelector("head > title").textContent != 'Manga') {
-                    document.querySelector("head > title").textContent = 'Manga'
+        /*
+        in order
+        make the scan 100% width (for portrait viewing)
+        no boarders in side by side mode
+        */
+        if (GM_config.get('100Width')) {
+            GM_addStyle(`
+                .scanContainer.res-w img {
+                    width: 100%;
                 }
-            }
-
-            if (GM_config.get('mangaTitle')) {
-                let observer = new MutationObserver(callback);
-                let options = {
-                    characterData: true,
-                    childList: true
+                .scanContainer img {
+                    object-fit: contain;
                 }
-                observer.observe(document.querySelector("head > title"), options);
-            }
-
-            /*
-            in order
-            make the scan 100% width (for portrait viewing)
-            no boarders in side by side mode
-            */
-            if (GM_config.get('100Width')) {
-                GM_addStyle(`
-            .scanContainer.res-w img {
-                width: 100%;
-            }
-            .scanContainer img {
-                object-fit: contain;
-            }
-            .amr-scan-container td {
-                padding: 0 !important;
-            }`)
-            }
-            if (GM_config.get('webtoon')) {
-                GM_addStyle(`
                 .amr-scan-container td {
                     padding: 0 !important;
-                }`)
-            }
+                }`
+            )
+        }
+        if (GM_config.get('webtoon')) {
+            GM_addStyle(`
+                .amr-scan-container td {
+                    padding: 0 !important;
+                }`
+            )
         }
     }
-}
-
-function topAnim(){
-    jQuery('html,body').animate({ scrollTop: 0 }, 0);
 }
 
 function callback() {

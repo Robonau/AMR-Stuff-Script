@@ -27,7 +27,12 @@ const optionss = [{
 {
     id: '100Width',
     name: 'always scale up images',
-    default: true//mangaTitleName
+    default: true
+},
+{
+    id: '100Width toggalable',
+    name: 'toggle always scale up images',
+    default: false
 },
 ]
 
@@ -122,6 +127,37 @@ function callbackk(mutations) {
                 }`
             )
         }
+        if (GM_config.get('100Width toggalable')) {
+            console.log('hihihihihihi')
+            let toggle = GM_config.get('100Width')
+            document.addEventListener('keydown', doc_keyUp, false);
+            console.log('hihihihihihi')
+            function doc_keyUp(e) {
+                if (e.keyCode == 83 && e.shiftKey == true){
+                    toggle = !toggle
+                    if (toggle){
+                        GM_addStyle(`
+                            .scanContainer.res-w img {
+                                width: 100%;
+                            }
+                            .scanContainer img {
+                                object-fit: contain;
+                            }`
+                        )
+                    }else{
+                        GM_addStyle(`
+                            .scanContainer.res-w img {
+                                width: auto;
+                            }
+                            .scanContainer img {
+                                object-fit: unset;
+                            }`
+                        )
+                    }
+                }
+            }
+        }
+
         if (GM_config.get('webtoon')) {
             GM_addStyle(`
                 .amr-scan-container td {

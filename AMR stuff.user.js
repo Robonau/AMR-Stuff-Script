@@ -134,6 +134,8 @@ function callbackk(mutations) {
             console.log('hihihihihihi')
             function doc_keyUp(e) {
                 if (e.keyCode == 83 && e.shiftKey == true){
+                    let ogh = document.body.offsetHeight
+                    let ogpos = window.visualViewport.pageTop
                     toggle = !toggle
                     if (toggle){
                         GM_addStyle(`
@@ -144,6 +146,9 @@ function callbackk(mutations) {
                                 object-fit: contain;
                             }`
                         )
+                        window.scrollTo({
+                            top:(document.body.offsetHeight/ogh)*ogpos
+                        })
                     }else{
                         GM_addStyle(`
                             .scanContainer.res-w img {
@@ -153,6 +158,9 @@ function callbackk(mutations) {
                                 object-fit: unset;
                             }`
                         )
+                        window.scrollTo({
+                            top:(document.body.offsetHeight/ogh)*ogpos
+                        })
                     }
                 }
             }

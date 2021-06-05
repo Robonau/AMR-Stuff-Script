@@ -10,7 +10,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
-// @require	     https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
+// @require	 https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
 // ==/UserScript==
 /* globals jQuery, $, waitForKeyElements, gmfetch, MonkeyConfig*/
 
@@ -28,12 +28,12 @@ const optionss = [{
 {
     id: '100Width',
     name: 'always scale up images',
-    default: false
+    default: true
 },
 {
     id: '100Width toggalable',
     name: 'toggle always scale up images',
-    default: true
+    default: false
 },
 ]
 
@@ -136,7 +136,7 @@ function callbackk(mutations) {
             function doc_keyUp(e) {
                 if (e.keyCode == 83 && e.shiftKey == true){
                     let ogpos = window.pageYOffset;
-					let here = getPos(ogpos);
+		    let here = getPos(ogpos);
                     toggle = !toggle
                     if (toggle){
                         GM_addStyle(`
@@ -147,7 +147,7 @@ function callbackk(mutations) {
                                 object-fit: contain;
                             }`
                         );
-						setPos(here);
+			setPos(here);
                     }else{
                         GM_addStyle(`
                             .scanContainer.res-w img {
@@ -157,7 +157,7 @@ function callbackk(mutations) {
                                 object-fit: unset;
                             }`
                         )
-						setPos(here);
+			setPos(here);
                     }
                 }
             }
@@ -181,7 +181,7 @@ function getPos(scrollPos) {
 		pos += height;
 		if (pos > scrollPos && img.index == undefined) {
 			img.index = i;
-			img.viewRatio = (pos - scrollPos)/height;
+		img.viewRatio = (pos - scrollPos)/height;
 		}
 	});
 	return img;

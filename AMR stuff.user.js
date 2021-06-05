@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         AMR stuff
-// @version      0.6
+// @version      0.7
 // @description  just some AMR QOL stuff
 // @author       Robo
 // @include      *
@@ -10,6 +10,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://openuserjs.org/src/libs/sizzle/GM_config.js
+// @require	 https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
 // ==/UserScript==
 /* globals jQuery, $, waitForKeyElements, gmfetch, MonkeyConfig*/
 
@@ -85,7 +86,7 @@ GM_registerMenuCommand("Config for AMR Manga Reading", function () {
 let observerr = new MutationObserver(callbackk);
 let start = 0
 function callbackk(mutations) {
-    if (document.querySelector("#amrapp div.v-select__selection.v-select__selection--comma")) {
+	if (document.querySelector("#amrapp div.v-select__selections")) {
         observerr.disconnect();
         start = 1
         //no boarders in continuous scroll mode
@@ -134,8 +135,8 @@ function callbackk(mutations) {
             console.log('hihihihihihi')
             function doc_keyUp(e) {
                 if (e.keyCode == 83 && e.shiftKey == true){
-                    let ogh = document.body.offsetHeight
-                    let ogpos = window.visualViewport.pageTop
+                    let ogpos = window.pageYOffset;
+		    let here = getPos(ogpos);
                     toggle = !toggle
                     if (toggle){
                         GM_addStyle(`
@@ -145,10 +146,8 @@ function callbackk(mutations) {
                             .scanContainer img {
                                 object-fit: contain;
                             }`
-                        )
-                        window.scrollTo({
-                            top:(document.body.offsetHeight/ogh)*ogpos
-                        })
+                        );
+			setPos(here);
                     }else{
                         GM_addStyle(`
                             .scanContainer.res-w img {
@@ -158,9 +157,7 @@ function callbackk(mutations) {
                                 object-fit: unset;
                             }`
                         )
-                        window.scrollTo({
-                            top:(document.body.offsetHeight/ogh)*ogpos
-                        })
+			setPos(here);
                     }
                 }
             }
@@ -174,6 +171,31 @@ function callbackk(mutations) {
             )
         }
     }
+}
+
+function getPos(scrollPos) {
+	let pos = 0;
+	let img = {};
+	$('.v-main__wrap .amr-scan-container tr').each(function(i){
+		let height = this.getBoundingClientRect().height;
+		pos += height;
+		if (pos > scrollPos && img.index == undefined) {
+			img.index = i;
+		img.viewRatio = (pos - scrollPos)/height;
+		}
+	});
+	return img;
+}
+
+function setPos(img) {
+	let pos = 0;
+	$('.v-main__wrap .amr-scan-container tr').each(function(i){
+		let height = this.getBoundingClientRect().height;
+		pos += height;
+		if (img.index == i) {
+			window.scrollTo({top: pos - img.viewRatio*height});
+		}
+	});
 }
 
 function callback() {
